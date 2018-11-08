@@ -1,12 +1,13 @@
 <?php
-namespace modules\imagehoster;                      //Make sure namespace is same structure with parent directory
+namespace modules\imagehoster;                                  //Make sure namespace is same structure with parent directory
 use \modules\imagehoster\Imgur as Imgur;
 use \modules\proxylist\PubProxy as PubProxy;
-use \classes\Auth as Auth;                          //For authentication internal user
-use \classes\JSON as JSON;                          //For handling JSON in better way
-use \classes\CustomHandlers as CustomHandlers;      //To get default response message
+use \modules\flexibleconfig\FlexibleConfig as FlexibleConfig;   
+use \classes\Auth as Auth;                                      //For authentication internal user
+use \classes\JSON as JSON;                                      //For handling JSON in better way
+use \classes\CustomHandlers as CustomHandlers;                  //To get default response message
 use \classes\Validation as Validation;
-use PDO;                                            //To connect with database
+use PDO;                                                        //To connect with database
 
 	/**
      * ImgurService class
@@ -32,6 +33,10 @@ use PDO;                                            //To connect with database
 
         var $username,$token;
 
+        //config var
+        var $keyconfig = 'imgurclientid';
+        var $login = 'a94c8d5890af13e';
+
         // database var
         protected $db;
 
@@ -43,7 +48,10 @@ use PDO;                                            //To connect with database
             if (!empty($db)) $this->db = $db;
             $this->baseurl = (($this->isHttps())?'https://':'http://').$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']);
             $this->basepath = $_SERVER['DOCUMENT_ROOT'].dirname($_SERVER['PHP_SELF']);
-			$this->basemod = dirname(__FILE__);
+            $this->basemod = dirname(__FILE__);
+            if (is_dir('../modules/flexibleconfig')){
+                $this->login = $this->setLogin();
+            }
         }
 
         //Detect scheme host
@@ -64,6 +72,20 @@ use PDO;                                            //To connect with database
             } else {
                 return 0;
             }
+        }
+
+        private function getDataLogin(){
+            $fc = new FlexibleConfig($this->db);
+            return $fc->readConfig($this->keyconfig);
+        }
+
+        private function setLogin(){
+            if(empty($this->getDataLogin())){
+                $fc = new FlexibleConfig($this->db);
+                $fc->insertConfig($this->keyconfig,$this->login,'imagehoster_module','Default Client-ID to access the Imgur API.');
+                return $this->getDataLogin();
+            }
+            return $this->getDataLogin();
         }
 
         /**
@@ -159,7 +181,8 @@ use PDO;                                            //To connect with database
 
         public function countLimit(){
             $img = new Imgur();
-            $img->clientid = $this->clientid;
+            $validclient = (!empty($this->clientid)?$this->clientid:$this->login);
+            $img->clientid = $validclient;
             $this->validid = $img->getClientID();
             $sqlcount = "SELECT count(a.ID) as TotalRow from imagehoster_data a where date(a.Created_at) = '".date('Y-m-d')."' and a.ClientID=:clientid;";
             $stmt2 = $this->db->prepare($sqlcount);
@@ -204,38 +227,46 @@ use PDO;                                            //To connect with database
             if(!empty($this->album)) $img->album = $this->album;
             if(!empty($this->type)) $img->type = $this->type;
             if(!empty($this->name)) $img->name = $this->name;
-            $imagejson = $img->upload()->getAll();
-            if(!empty($imagejson)){
-                $image = json_decode($imagejson,true);
-                if($image['success']){
-                    $data = [
-                        'result' => $image['data'],
-                        'status' => 'success',
-                        'code' => 'RS101',
-                        'message' => CustomHandlers::getreSlimMessage('RS101',$this->lang)
-                    ];
-                    $this->insertDataImage(
-                        $image['data']['id'],
-                        json_encode($image['data']),
-                        $image['data']['title'],
-                        $image['data']['link'],
-                        $image['data']['type'],
-                        $image['data']['size'],
-                        $image['data']['width'],
-                        $image['data']['height']
-                    );
+            if(!empty($img->clientid)){
+                $imagejson = $img->upload()->getAll();
+                if(!empty($imagejson)){
+                    $image = json_decode($imagejson,true);
+                    if($image['success']){
+                        $data = [
+                            'result' => $image['data'],
+                            'status' => 'success',
+                            'code' => 'RS101',
+                            'message' => CustomHandlers::getreSlimMessage('RS101',$this->lang)
+                        ];
+                        $this->insertDataImage(
+                            $image['data']['id'],
+                            json_encode($image['data']),
+                            $image['data']['title'],
+                            $image['data']['link'],
+                            $image['data']['type'],
+                            $image['data']['size'],
+                            $image['data']['width'],
+                            $image['data']['height']
+                        );
+                    } else {
+                        $data = [
+                            'status' => 'error',
+                            'code' => 'RS201',
+                            'message' => CustomHandlers::getreSlimMessage('RS201',$this->lang)
+                        ];
+                    }
                 } else {
                     $data = [
                         'status' => 'error',
-                        'code' => 'RS201',
-                        'message' => CustomHandlers::getreSlimMessage('RS201',$this->lang)
+                        'code' => 'RS910',
+                        'message' => CustomHandlers::getreSlimMessage('RS910',$this->lang)
                     ];
                 }
             } else {
                 $data = [
                     'status' => 'error',
-                    'code' => 'RS910',
-                    'message' => CustomHandlers::getreSlimMessage('RS910',$this->lang)
+                    'code' => 'RS802',
+                    'message' => CustomHandlers::getreSlimMessage('RS802',$this->lang)
                 ];
             }
             return $data;
@@ -244,57 +275,71 @@ use PDO;                                            //To connect with database
         //Process upload with auto rotate proxy
         public function processUploadRotate(){
             $proxy = new PubProxy;
-            $proxy->last_check = 30;
+            $proxy->last_check = 1;
             $proxy->type = 'http';
             $proxy->https = true;
             $proxy->post = true;
             $proxy->google = true;
+            $proxy->referer = true;
+            $proxy->cookies = true;
             $proxy->level = 'elite';
             $dataproxy = $proxy->make()->getProxy();
             $img = new Imgur();
             $img->proxy = $dataproxy;
-            $img->clientid = $this->clientid;
+            if(!empty($this->validid)){
+                $img->clientid = $this->validid;
+            } else {
+                $img->clientid = (!empty($this->clientid)?$this->clientid:$this->login);
+            }
             $img->image = $this->image;
             if(!empty($this->title)) $img->title = $this->title;
             if(!empty($this->description)) $img->description = $this->description;
             if(!empty($this->album)) $img->album = $this->album;
             if(!empty($this->type)) $img->type = $this->type;
             if(!empty($this->name)) $img->name = $this->name;
-            $imagejson = $img->upload()->getAll();
-            if(!empty($imagejson)){
-                $image = json_decode($imagejson,true);
-                if($image['success']){
-                    $data = [
-                        'result' => $image['data'],
-                        'status' => 'success',
-                        'code' => 'RS101',
-                        'message' => CustomHandlers::getreSlimMessage('RS101',$this->lang),
-                        'network' => $dataproxy
-                    ];
-                    $this->insertDataImage(
-                        $image['data']['id'],
-                        json_encode($image['data']),
-                        $image['data']['title'],
-                        $image['data']['link'],
-                        $image['data']['type'],
-                        $image['data']['size'],
-                        $image['data']['width'],
-                        $image['data']['height']
-                    );
+            if(!empty($img->clientid)){
+                $imagejson = $img->upload()->getAll();
+                if(!empty($imagejson)){
+                    $image = json_decode($imagejson,true);
+                    if($image['success']){
+                        $data = [
+                            'result' => $image['data'],
+                            'status' => 'success',
+                            'code' => 'RS101',
+                            'message' => CustomHandlers::getreSlimMessage('RS101',$this->lang),
+                            'network' => $dataproxy
+                        ];
+                        $this->insertDataImage(
+                            $image['data']['id'],
+                            json_encode($image['data']),
+                            $image['data']['title'],
+                            $image['data']['link'],
+                            $image['data']['type'],
+                            $image['data']['size'],
+                            $image['data']['width'],
+                            $image['data']['height']
+                        );
+                    } else {
+                        $data = [
+                            'status' => 'error',
+                            'code' => 'RS201',
+                            'message' => CustomHandlers::getreSlimMessage('RS201',$this->lang),
+                            'network' => $dataproxy
+                        ];
+                    }
                 } else {
                     $data = [
                         'status' => 'error',
-                        'code' => 'RS201',
-                        'message' => CustomHandlers::getreSlimMessage('RS201',$this->lang),
+                        'code' => 'RS910',
+                        'message' => CustomHandlers::getreSlimMessage('RS910',$this->lang),
                         'network' => $dataproxy
                     ];
                 }
             } else {
                 $data = [
                     'status' => 'error',
-                    'code' => 'RS910',
-                    'message' => CustomHandlers::getreSlimMessage('RS910',$this->lang),
-                    'network' => $dataproxy
+                    'code' => 'RS802',
+                    'message' => CustomHandlers::getreSlimMessage('RS802',$this->lang)
                 ];
             }
             return $data;

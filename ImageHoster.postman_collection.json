@@ -159,7 +159,7 @@
 						{
 							"key": "ClientID",
 							"value": "",
-							"description": "Length is 1-500 {lowercase,required}",
+							"description": "Length is 1-500 {optional,lowercase}",
 							"type": "text"
 						},
 						{
@@ -194,7 +194,7 @@
 						}
 					]
 				},
-				"description": "Upload Image\n---\nThis will make remote upload.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas)\n- There is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- This will make rotate proxy automatically if limit is reached.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
+				"description": "Upload Image\n---\nThis will make remote upload.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas in FlexibleConfig)\n- There is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- This will make rotate proxy automatically if limit is reached.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
 			},
 			"response": []
 		},
@@ -229,7 +229,7 @@
 							"key": "ClientID",
 							"value": "",
 							"type": "text",
-							"description": "Length is 1-500 {lowercase,required}"
+							"description": "Length is 1-500 {optional,lowercase}"
 						},
 						{
 							"key": "Title",
@@ -263,7 +263,7 @@
 						}
 					]
 				},
-				"description": "Upload Image with Rotate Proxy\n---\nThis will make remote upload with Rotate Proxy.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas).\n- Faster because we don't check for rate limit but there is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
+				"description": "Upload Image with Rotate Proxy\n---\nThis will make remote upload with Rotate Proxy.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas in FlexibleConfig).\n- Faster because we don't check for rate limit but there is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
 			},
 			"response": []
 		}

@@ -32,7 +32,6 @@ use \classes\middleware\ApiKey as ApiKey;                       //ApiKey Middlew
         $body->write($is->uploadImage());
         return classes\Cors::modify($response,$body,200);
     })->add(new ValidateParam('Image','1-250','url'))
-        ->add(new ValidateParam('ClientID','1-500','required'))
         ->add(new ValidateParam('Token','1-250','required'))
         ->add(new ValidateParam('Username','1-50','required'));
 
@@ -57,7 +56,6 @@ use \classes\middleware\ApiKey as ApiKey;                       //ApiKey Middlew
         $body->write($is->uploadImageRotate());
         return classes\Cors::modify($response,$body,200);
     })->add(new ValidateParam('Image','1-250','url'))
-        ->add(new ValidateParam('ClientID','1-500','required'))
         ->add(new ValidateParam('Token','1-250','required'))
         ->add(new ValidateParam('Username','1-50','required'));
 
