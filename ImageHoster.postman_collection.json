@@ -1,17 +1,22 @@
 {
-	"variables": [],
 	"info": {
-		"name": "ImageHoster",
 		"_postman_id": "261db6b0-2d7d-de51-9ec2-ddbe6bd89b8b",
+		"name": "ImageHoster",
 		"description": "API Dcoumentation about Image Hoster Module.",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Get Info Module",
 			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
-					"raw": "http://localhost:1337/reSlim/src/api/enterprise_customer/get/info/?apikey={yourapikey}",
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/get/info/?apikey={yourapikey}",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -21,7 +26,7 @@
 						"reSlim",
 						"src",
 						"api",
-						"enterprise_customer",
+						"imagehoster",
 						"get",
 						"info",
 						""
@@ -29,16 +34,10 @@
 					"query": [
 						{
 							"key": "apikey",
-							"value": "{yourapikey}",
-							"equals": true,
-							"description": ""
+							"value": "{yourapikey}"
 						}
-					],
-					"variable": []
+					]
 				},
-				"method": "GET",
-				"header": [],
-				"body": {},
 				"description": "Get Info Module\n---\nGet info detail about Image Hoster Module."
 			},
 			"response": []
@@ -46,10 +45,29 @@
 		{
 			"name": "Installation Image Hoster Database",
 			"request": {
-				"url": "http://localhost:1337/reSlim/src/api/imagehoster/install/{yourusername}/{yourtoken}",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/install/{yourusername}/{yourtoken}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"install",
+						"{yourusername}",
+						"{yourtoken}"
+					]
+				},
 				"description": "Install Image Hoster Database\n---\nThis will install Image Hoster Database.\n\nNote:\n- Only user with role Superuser who can install.\n- Your exist database will be replaced if you ever install this before."
 			},
 			"response": []
@@ -57,10 +75,29 @@
 		{
 			"name": "Uninstallation Image Hoster Database",
 			"request": {
-				"url": "http://localhost:1337/reSlim/src/api/imagehoster/uninstall/{yourusername}/{yourtoken}",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/uninstall/{yourusername}/{yourtoken}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"uninstall",
+						"{yourusername}",
+						"{yourtoken}"
+					]
+				},
 				"description": "Uninstall Image Hoster Database\n---\nThis will remove Image Hoster Database.\n\nNote:\n- Only user with role Superuser who can uninstall.\n- Your exist enterprise customer database will be removed clean."
 			},
 			"response": []
@@ -68,6 +105,12 @@
 		{
 			"name": "Index",
 			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/data/index/{yourusername}/{token}/{page}/{itemsperpage}/?query={query to search data}&firstdate={yyyy-mm-dd}&lastdate={yyyy-mm-dd}",
 					"protocol": "http",
@@ -92,28 +135,18 @@
 					"query": [
 						{
 							"key": "query",
-							"value": "{query to search data}",
-							"equals": true,
-							"description": ""
+							"value": "{query to search data}"
 						},
 						{
 							"key": "firstdate",
-							"value": "{yyyy-mm-dd}",
-							"equals": true,
-							"description": ""
+							"value": "{yyyy-mm-dd}"
 						},
 						{
 							"key": "lastdate",
-							"value": "{yyyy-mm-dd}",
-							"equals": true,
-							"description": ""
+							"value": "{yyyy-mm-dd}"
 						}
-					],
-					"variable": []
+					]
 				},
-				"method": "GET",
-				"header": [],
-				"body": {},
 				"description": "Index\n---\nThis will index, show or scan all image data with pagination.\n\nNote:\n- Format param **firstdate** and **lastdate** is **yyyy-mm-dd** but this is **not required** as default."
 			},
 			"response": []
@@ -121,10 +154,32 @@
 		{
 			"name": "Read",
 			"request": {
-				"url": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/data/read/{id}/{yourusername}/{yourtoken}",
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/data/read/{id}/{yourusername}/{yourtoken}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"imgur",
+						"data",
+						"read",
+						"{id}",
+						"{yourusername}",
+						"{yourtoken}"
+					]
+				},
 				"description": "Read\n---\nThis will show the image data by image id"
 			},
 			"response": []
@@ -132,7 +187,6 @@
 		{
 			"name": "Upload Image (Recommended)",
 			"request": {
-				"url": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/upload",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -194,6 +248,22 @@
 						}
 					]
 				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"imgur",
+						"upload"
+					]
+				},
 				"description": "Upload Image\n---\nThis will make remote upload.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas in FlexibleConfig)\n- There is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- This will make rotate proxy automatically if limit is reached.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
 			},
 			"response": []
@@ -201,7 +271,6 @@
 		{
 			"name": "Upload with Rotate Proxy",
 			"request": {
-				"url": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/upload/rotate",
 				"method": "POST",
 				"header": [],
 				"body": {
@@ -210,57 +279,74 @@
 						{
 							"key": "Username",
 							"value": "",
-							"type": "text",
-							"description": "Length is 1-50 {alphanumeric,lowercase,required}"
+							"description": "Length is 1-50 {alphanumeric,lowercase,required}",
+							"type": "text"
 						},
 						{
 							"key": "Token",
 							"value": "",
-							"type": "text",
-							"description": "Length is 1-250 {required}"
+							"description": "Length is 1-250 {required}",
+							"type": "text"
 						},
 						{
 							"key": "Image",
 							"value": "",
-							"type": "text",
-							"description": "Length is 1-250 {url,required}"
+							"description": "Length is 1-250 {url,required}",
+							"type": "text"
 						},
 						{
 							"key": "ClientID",
 							"value": "",
-							"type": "text",
-							"description": "Length is 1-500 {optional,lowercase}"
+							"description": "Length is 1-500 {optional,lowercase}",
+							"type": "text"
 						},
 						{
 							"key": "Title",
 							"value": "",
-							"type": "text",
-							"description": "Length is 0-250 {optional}"
+							"description": "Length is 0-250 {optional}",
+							"type": "text"
 						},
 						{
 							"key": "Description",
 							"value": "",
-							"type": "text",
-							"description": "Length is 0-250 {optional}"
+							"description": "Length is 0-250 {optional}",
+							"type": "text"
 						},
 						{
 							"key": "Name",
 							"value": "",
-							"type": "text",
-							"description": "Length is 0-50 {optional}"
+							"description": "Length is 0-50 {optional}",
+							"type": "text"
 						},
 						{
 							"key": "Album",
 							"value": "",
-							"type": "text",
-							"description": "Length is 0-50 {optional}"
+							"description": "Length is 0-50 {optional}",
+							"type": "text"
 						},
 						{
 							"key": "Type",
 							"value": "",
-							"type": "text",
-							"description": "Length is 0-50 {optional}"
+							"description": "Length is 0-50 {optional}",
+							"type": "text"
 						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/imgur/upload/rotate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"imgur",
+						"upload",
+						"rotate"
 					]
 				},
 				"description": "Upload Image with Rotate Proxy\n---\nThis will make remote upload with Rotate Proxy.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas in FlexibleConfig).\n- Faster because we don't check for rate limit but there is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
