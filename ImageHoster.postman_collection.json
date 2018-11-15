@@ -352,6 +352,54 @@
 				"description": "Upload Image with Rotate Proxy\n---\nThis will make remote upload with Rotate Proxy.\n\nNote:\n- We use Rotate Client-ID, so make sure you have at least two Client-ID (input with separated commas in FlexibleConfig).\n- Faster because we don't check for rate limit but there is upload limit 1000/day per single Client-ID. If you have two Client-ID then it will increased to (2x1000) = 2000/day.\n- Rotate Proxy is to keep your application id safer for spamming but the connection is not smooth and unstable."
 			},
 			"response": []
+		},
+		{
+			"name": "Delete Data Upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Username",
+							"value": "",
+							"description": "Length is 1-50 {alphanumeric,lowercase,required}",
+							"type": "text"
+						},
+						{
+							"key": "Token",
+							"value": "",
+							"description": "Length is 1-250 {required}",
+							"type": "text"
+						},
+						{
+							"key": "ID",
+							"value": "",
+							"description": "Length is 1-20 {optional,lowercase}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:1337/reSlim/src/api/imagehoster/data/delete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"reSlim",
+						"src",
+						"api",
+						"imagehoster",
+						"data",
+						"delete"
+					]
+				},
+				"description": "Delete Data Upload\n---\nThis will make delete the data upload.\n\nNote:\n- This only delete the data image which is located in our database.\n- Only Superuser and Admin is able to delete the other users."
+			},
+			"response": []
 		}
 	]
 }

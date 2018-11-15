@@ -1,10 +1,9 @@
 <?php
-namespace modules\imagehoster;                        //Make sure namespace is same structure with parent directory
+namespace modules\imagehoster;                      //Make sure namespace is same structure with parent directory
 
 use \classes\Auth as Auth;                          //For authentication internal user
 use \classes\JSON as JSON;                          //For handling JSON in better way
 use \classes\CustomHandlers as CustomHandlers;      //To get default response message
-use \classes\UniversalCache as UniversalCache;      //To reduce the limit rate from Google translate with cache
 use PDO;                                            //To connect with database
 
 	/**
@@ -16,6 +15,9 @@ use PDO;                                            //To connect with database
      * @license    https://github.com/aalfiann/reSlim-modules-imagehoster/blob/master/LICENSE.md  MIT License
      */
     class ImageHoster {
+
+        // model data
+        var $id,$username,$token;
 
         // database var
         protected $db;
@@ -159,6 +161,80 @@ use PDO;                                            //To connect with database
         //Get modules information
         public function viewInfo(){
             return file_get_contents($this->basemod.'/package.json');
+        }
+
+        public function deleteData($username=''){
+            $newusername = strtolower($this->username);
+            try {
+                $this->db->beginTransaction();
+
+                if (!empty($username)) {
+                    $sql = "DELETE FROM imagehoster_data WHERE ID= BINARY :id AND Created_by=:username;";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id', $this->id, PDO::PARAM_STR);
+                    $stmt->bindParam(':username', $newusername, PDO::PARAM_STR);
+                } else {
+                    $sql = "DELETE FROM imagehoster_data WHERE ID= BINARY :id;";
+                    $stmt = $this->db->prepare($sql);
+                    $stmt->bindParam(':id', $this->id, PDO::PARAM_STR);
+                }
+
+                if ($stmt->execute()) {
+                    $data = [
+                        'status' => 'success',
+                        'code' => 'RS104',
+                        'message' => CustomHandlers::getreSlimMessage('RS104',$this->lang)
+                    ];	
+                } else {
+                    $data = [
+                        'status' => 'error',
+                        'code' => 'RS204',
+                        'message' => CustomHandlers::getreSlimMessage('RS204',$this->lang)
+                    ];
+                }
+                $this->db->commit();
+            } catch (PDOException $e) {
+                $data = [
+                    'status' => 'error',
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage()
+                ];
+                $this->db->rollBack();
+            }
+            return $data;
+        }
+
+        public function delete() {
+            if (Auth::validToken($this->db,$this->token,$this->username)){
+                $roles = Auth::getRoleID($this->db,$this->token);
+                if ($roles <= 2){
+                    $data = $this->deleteData();
+                } else if ($roles == 5){
+                    $data = [
+                        'status' => 'error',
+                        'code' => 'RS404',
+                        'message' => CustomHandlers::getreSlimMessage('RS404',$this->lang)
+                    ];
+                } else {
+                    if(!empty($this->username)){
+                        $data = $this->deleteData($this->username);
+                    } else {
+                        $data = [
+                            'status' => 'error',
+                            'code' => 'RS802',
+                            'message' => CustomHandlers::getreSlimMessage('RS802',$this->lang)
+                        ];
+                    }
+                }
+            } else {
+                $data = [
+	    			'status' => 'error',
+					'code' => 'RS401',
+        	    	'message' => CustomHandlers::getreSlimMessage('RS401',$this->lang)
+				];
+            }
+			return JSON::encode($data,true);
+			$this->db = null;
         }
 
     }
