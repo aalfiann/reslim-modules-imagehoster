@@ -520,7 +520,7 @@ use PDO;                                                        //To connect wit
         }
         
         public function index() {
-            if (Auth::validToken($this->db,$this->token)){
+            if (Auth::validToken($this->db,$this->token,$this->username)){
 				$data = $this->indexData();
 			} else {
 				$data = [
