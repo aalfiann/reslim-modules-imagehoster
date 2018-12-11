@@ -121,8 +121,7 @@ use PDO;                                            //To connect with database
                                 'status' => 'success',
                                 'code' => 'RS104',
                                 'message' => CustomHandlers::getreSlimMessage('RS104',$this->lang)
-                            ];	
-                            Auth::deleteCacheAll('deposit-*',30);
+                            ];
                         } else {
                             $data = [
                                 'status' => 'error',
